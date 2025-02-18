@@ -1,0 +1,17 @@
+services:
+  rabbitmq-server:
+    image: rabbitmq:4.0-management
+    hostname: rabbitmq
+    container_name: rabbitmq-server
+    environment:
+      - RABBITMQ_DEFAULT_USER=rmuser
+      - RABBITMQ_DEFAULT_PASS=rmpassword
+      # - RABBITMQ_USER=user2
+      # - RABBITMQ_PASSWORD=qwaszxcv
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ../.data/rabbitmq:/var/lib/rabbitmq
+      - ../etc/so/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:ro
+      - ../etc/so/definitions.json:/etc/rabbitmq/definitions.json:ro
