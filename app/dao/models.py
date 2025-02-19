@@ -33,7 +33,7 @@ class Table(Base):
 
 
 class TimeSlot(Base):
-    __tablename__ = 'time_slots'
+    __tablename__ = 'time_slot'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     start_time: Mapped[str] = mapped_column(String(5), nullable=False)
