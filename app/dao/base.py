@@ -1,17 +1,14 @@
-from typing import TypeVar, Generic, Type
-from pydantic import BaseModel
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.future import select
-from sqlalchemy import (
-    update as sqlalchemy_update,
-    delete as sqlalchemy_delete,
-    func
-)
-from sqlalchemy.ext.asyncio import AsyncSession
-from loguru import logger
+from typing import Generic, Type, TypeVar
 
 from app.dao.database import Base
-
+from loguru import logger
+from pydantic import BaseModel
+from sqlalchemy import delete as sqlalchemy_delete
+from sqlalchemy import func
+from sqlalchemy import update as sqlalchemy_update
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 
 T = TypeVar('T', bound=Base)
 

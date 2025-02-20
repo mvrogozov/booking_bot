@@ -1,13 +1,12 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from sqlalchemy import inspect, TIMESTAMP, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy.ext.asyncio import (
-    AsyncAttrs, async_sessionmaker, create_async_engine, AsyncSession
-)
 
 from app.config import settings
+from sqlalchemy import TIMESTAMP, func, inspect
+from sqlalchemy.ext.asyncio import (AsyncAttrs, AsyncSession,
+                                    async_sessionmaker, create_async_engine)
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 engine = create_async_engine(url=settings.DB_URL)
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession)

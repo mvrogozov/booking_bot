@@ -1,10 +1,11 @@
-from datetime import datetime, date
+from datetime import date, datetime
+
+from app.dao.base import BaseDAO
+from app.dao.models import Booking, Table, TimeSlot, User
 from loguru import logger
-from sqlalchemy import select, update, delete, func
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
-from app.dao.base import BaseDAO
-from app.dao.models import User, TimeSlot, Table, Booking
 
 
 class UserDAO(BaseDAO[User]):
@@ -115,3 +116,50 @@ class BookingDAO(BaseDAO[Booking]):
                 )
             else:
                 logger.info('No bookings to update status')
+        except SQLAlchemyError as e:
+            logger.error(f"Ошибка при обновлении статуса бронирований: {e}")
+            await self._sesion.rollback()
+
+    async def cancel_book(self, book_id: int):
+        try:
+            query = (
+                update(self.model)
+                .filter_by(id=book_id)
+                .values(status='canceled')
+                .execution_options(synchronize_session='fetch')
+            )
+            result = await self._session.execute(query)
+            await self._session.flush()
+            return result.rowcount
+        except SQLAlchemyError as e:
+            logger.error(f'Error deleting records: {e}')
+            raise
+
+    async def delete_book(self, book_id: int):
+        try:
+            query = delete(self.model).filter_by(id=book_id)
+            result = await self._session.execute(query)
+            logger.info(f"Удалено {result.rowcount} записей.")
+            await self._session.flush()
+            return result.rowcount
+        except SQLAlchemyError as e:
+            logger.error(f"Ошибка при удалении записей: {e}")
+            raise
+
+    async def book_count(self) -> dict[str, int]:
+        try:
+            status_counts = {}
+            statuses = ['booked', 'completed', 'canceled']
+
+            for status in statuses:
+                query = select(
+                    func.count(self.model.id)
+                    ).where(self.model.status == status)
+                result = await self._session.execute(query)
+                count = result.scalar()
+                status_counts[status] = count
+                logger.info(f'Found {count} bookings with status {status}')
+                return status_counts
+        except SQLAlchemyError as e:
+            logger.error(f'Error counting bookings with statuses: {e}')
+            raise

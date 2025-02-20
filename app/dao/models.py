@@ -1,10 +1,8 @@
 from datetime import datetime
-from sqlalchemy import (
-    BigInteger, String, Integer, Date, ForeignKey
-)
-from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from app.dao.database import Base
+from sqlalchemy import BigInteger, Date, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 class User(Base):
